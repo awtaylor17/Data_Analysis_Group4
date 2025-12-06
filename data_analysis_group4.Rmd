@@ -75,6 +75,10 @@ q1_top5
 # Question 2: What year did the State of Maryland spend the most? How about the least?
 # Findings: 
 ```{r}
+years <- state_payments |>
+  group_by(fiscal_year) |>
+  summarise(total_spending = sum(amount, na.rm = TRUE)) |>
+  arrange(desc(total_spending))
 
 ```
 

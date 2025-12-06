@@ -73,7 +73,7 @@ q1_top5
 ```
 
 # Question 2: What year did the State of Maryland spend the most? How about the least?
-# Findings: 
+# Findings: The State of Maryland spent the most in 2025, spending $43,703,480,470 and the least was in 2008 (if not counting 2026) where it spent $19,879,214,691.
 ```{r}
 years <- state_payments |>
   group_by(fiscal_year) |>

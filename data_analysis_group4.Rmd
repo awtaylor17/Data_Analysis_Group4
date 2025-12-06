@@ -1,0 +1,62 @@
+---
+title: "data_analysis_group4"
+authors: "Razak Diallo, Lea Glaser, Deja Jones, Alexander Taylor"
+date: "2025-12-06"
+output: html_document
+---
+
+# Load Libraries
+```{r}
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(tidycensus)
+```
+
+
+# Load and clean data
+```{r}
+
+
+state_payments <- read_csv("data/state_payments.csv") |>
+  clean_names() |>
+  mutate(
+    date = ymd_hms(date),
+    amount = str_replace_all(amount, "\\$", ""),
+    amount = str_replace_all(amount, "\\,", ""),
+    amount = as.numeric(amount)
+         )
+
+glimpse(state_payments)
+
+
+```
+# Question 1: What is the median income of the zip codes where the top five vendors are located?
+# Findings: 
+```{r}
+
+```
+
+# Question 2: What year did the State of Maryland spend the most? How about the least?
+# Findings: 
+```{r}
+
+```
+
+# Question 3: What is the total amount of payments in each zip code?
+# Findings: 
+```{r}
+
+```
+
+# Question 4: How many payments were made each month?
+# Findings: 
+```{r}
+
+```
+
+# Question 5: What agency spent the most money in each county?
+# Findings: 
+```{r}
+
+```

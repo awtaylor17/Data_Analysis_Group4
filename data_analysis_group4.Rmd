@@ -4,7 +4,10 @@ authors: "Razak Diallo, Lea Glaser, Deja Jones, Alexander Taylor"
 date: "2025-12-06"
 output: html_document
 ---
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 999)
+```
 # Load Libraries
 ```{r}
 library(tidyverse)
@@ -16,8 +19,6 @@ library(tidycensus)
 
 # Load and clean data
 ```{r}
-
-
 state_payments <- read_csv("data/state_payments.csv") |>
   clean_names() |>
   mutate(
@@ -26,10 +27,7 @@ state_payments <- read_csv("data/state_payments.csv") |>
     amount = str_replace_all(amount, "\\,", ""),
     amount = as.numeric(amount)
          )
-
 glimpse(state_payments)
-
-
 ```
 # Question 1: What is the median income of the zip codes where the top five vendors are located?
 # Findings: All five are displayed below. Two of the zip codes have a median income greater than $120,000, one is just under $100,000 and the other, which has the highest amount of payments, has a median income of about $60,000. I would want to look more the last zip code to find because it seems to be an outlier: it has a lower median income but a high amount of payments. 
@@ -94,8 +92,18 @@ years <- state_payments |>
 
 ```
 
-# Question 5: What agency spent the most money in each county?
-# Findings: 
+# Question 5: What zip code did each agency spend the most money?
+# Findings: There's a lot of interesting data here. For example the Department of Education spent the most in Baltimore City, around the inner harbor. The Department of Health spent the most in Glenn Burnie, where the Baltimore-Washington Medical Center is. Maryland State Police spent the most in 30501, a zip code in Georgia. All of the payments go to a Mansfield Oil Company.
 ```{r}
-
+agency_county <- state_payments |> 
+  group_by(vendor_zip, agency_name) |> 
+  summarise(
+    total_payments = sum(amount)
+  ) |> 
+  group_by(agency_name) |> 
+  filter(total_payments == max(total_payments)) |> 
+  summarise(
+    top_zip = vendor_zip,
+    amount = total_payments
+  )
 ```

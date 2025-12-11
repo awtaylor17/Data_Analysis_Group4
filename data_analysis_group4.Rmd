@@ -30,10 +30,10 @@ state_payments <- read_csv("data/state_payments.csv") |>
          )
 glimpse(state_payments)
 ```
-# Question 1: What is the median income of the zip codes where the top five vendors are located?
-# Findings: All five are displayed below. Two of the zip codes have a median income greater than $120,000, one is just under $100,000 and the other, which has the highest amount of payments, has a median income of about $60,000. I would want to look more the last zip code to find because it seems to be an outlier: it has a lower median income but a high amount of payments. 
+# Note on data: This dataframe contains the all the payments the State of Maryland made from the 2008 fiscal year to the 2026 fiscal year. Each row is one payment, and contains the date of the payment, the payment's amount, the agency doing the paying, the organization recieving the payment and the zip code of that organization. Before cleaning the data, the "amount" column was not a numeric value and the "date" column was not a date data type.
 
-# NOTE: There doesn't seem to be median income data for 10041. How do you suggest I get around this?
+# Question 1: What is the median income of the zip codes where the top five vendors are located?
+# Findings: All five are displayed below. Two of the zip codes have a median income greater than $120,000, one is just under $100,000 and the other, which has the highest amount of payments, has a median income of about $60,000. I would want to look more the last zip code to find because it seems to be an outlier: it has a lower median income but a high amount of payments. One of the zip codes, 10041, has no demographic data. That's because that zip code only incompasses one bulding. Because it is in New York's financial district, I guess this bulding is an office building and not a residential building, so there is no demographic data that can be collected. 
 ```{r}
 # Find zip codes with the top five vendors
 

@@ -81,16 +81,52 @@ years <- state_payments |>
 
 ```
 
-# Question 3: What is the total amount of payments in each zip code?
+# Question 3: What county school system received the most money each year?
 # Findings: 
 ```{r}
-
+#still working on this
+state_payments |> 
+  mutate(
+    vendor_name = str_to_upper(vendor_name)
+  ) |> 
+  filter(str_detect(vendor_name, "PUBLIC SCHOOL")) |> 
+  distinct(vendor_name)
 ```
 
-# Question 4: How many payments were made each month?
-# Findings: 
+# Question 4: Which agency had the largest increase in spending between 2019 and 2025?
+# Findings: The Governor's Office for Children had the highest spending increase between 2019 and 2025 at around 87,736% or around $45,427,965. The highest raw number increase was for the Maryland Department of Health at 4,779,327,673.28 or a ~40% increase from 2019. The biggest raw  decrease was for the State Highway Administration at -281,313,823.70. For percentage decrease it goes to the Boards Commissions & Offices at -99.8% followed by the Military Department at -80%.
 ```{r}
 
+agency_change <- state_payments |> 
+  mutate(
+    agency_name = case_when(
+      agency_name == "MARYLAND DEPARTMENT OF HEALTH, MDH" ~ "MARYLAND DEPARTMENT OF HEALTH",
+      agency_name == "DEPT OF VETERANS & MILITARY FAMILIES" ~ "MARYLAND DEPARTMENT OF VETERANS AFFAIRS",
+      agency_name == "MARYLAND STATE LOTTERY AGENCY" ~ "MARYLAND LOTTERY AND GAMING CONTROL AGY",
+      agency_name == "MD DEPARTMENT OF HUMAN SERVICES" ~ "DEPARTMENT OF HUMAN SERVICES",
+      agency_name == "MARYLAND STATE DEPARTMENT OF EDUCATION" ~ "STATE DEPARTMENT OF EDUCATION",
+      agency_name == "MARYLAND DEPARTMENT OF LABOR" ~ "DEPARTMENT OF LABOR",
+      agency_name == "MD DEPARTMENT OF AGRICULTURE" ~ "DEPARTMENT OF AGRICULTURE",
+      agency_name == "ENERGY ADMINISTRATION" ~ "MARYLAND ENERGY ADMINISTRATION",
+      agency_name == "DEPARTMENT OF JUVENILE SERVICES-HQ" ~ "DEPARTMENT OF JUVENILE SERVICES",
+      agency_name == "Maryland Environmental Service" ~ "MARYLAND ENVIRONMENTAL SERVICE",
+      .default = agency_name
+    )
+  ) |> 
+    group_by(agency_name, fiscal_year) |> 
+    summarise(
+      year_total = sum(amount)
+    ) |> filter(fiscal_year == 2019 | fiscal_year == 2025) |> 
+    pivot_wider(names_from = fiscal_year, values_from = year_total) |> 
+    clean_names() |> 
+    rename(spending_2025 = x2025, spending_2019 = x2019) |> 
+    mutate(
+      change = spending_2025 - spending_2019,
+      spending_2025 = replace_na(spending_2025, 0),
+      spending_2019 = replace_na(spending_2019, 0),
+      perct = change/spending_2019 * 100
+    ) |> 
+      mutate(across(where(is.numeric), ~replace(., is.infinite(.), 0)))
 ```
 
 # Question 5: What zip code did each agency spend the most money?

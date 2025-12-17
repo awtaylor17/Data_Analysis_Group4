@@ -82,15 +82,65 @@ years <- state_payments |>
 ```
 
 # Question 3: What county school system received the most money each year?
-# Findings: 
+# Findings: Over the range of the data set, Prince George's County and Baltimore City fought for first place in state funding for their school systems. 
+
 ```{r}
-#still working on this
-state_payments |> 
+school_system_payments <- state_payments |> 
   mutate(
     vendor_name = str_to_upper(vendor_name)
   ) |> 
-  filter(str_detect(vendor_name, "PUBLIC SCHOOL")) |> 
-  distinct(vendor_name)
+  filter(str_detect(vendor_name, "SCHOOL") | 
+           str_detect(vendor_name, "PUB SCHOOL") | 
+           str_detect(vendor_name, "CPS") | 
+           str_detect(vendor_name, "INFANT") & str_detect(vendor_name, "TODD") & str_detect(agency_name, "EDUCATION") | 
+           str_detect(vendor_name, "BOARD OF ED") | 
+           str_detect(vendor_name, "BD OF ED") |
+           vendor_name == "CARROLL COUNTY CAREER & TECHNOLOGY CENTER" | vendor_name == "HCPPS") |> 
+  mutate(
+    vendor_name = case_when(
+        str_detect(vendor_name,"ALLEGANY") ~ "ALLEGANY",
+        str_detect(vendor_name,"ANNE ARUN") ~ "ANNE ARUNDEL",
+        str_detect(vendor_name,"BALTIMORE CITY") ~ "BALTIMORE CITY",
+        str_detect(vendor_name,"BALTIMORE CO") ~ "BALTIMORE",
+        str_detect(vendor_name,"CALVERT") ~ "CALVERT",
+        str_detect(vendor_name,"CAROLINE") | vendor_name == "CCPS" ~ "CAROLINE",
+        str_detect(vendor_name,"CARROLL") ~ "CARROLL",
+        str_detect(vendor_name,"CECIL") ~ "CECIL",
+        str_detect(vendor_name,"CHARLES") ~ "CHARLES",
+        str_detect(vendor_name,"DORCHESTER") ~ "DORCHESTER",
+        str_detect(vendor_name,"FCPS") | str_detect(vendor_name, "FREDERICK") ~ "FREDERICK",
+        str_detect(vendor_name,"HARFORD") ~ "HARFORD",
+        str_detect(vendor_name,"HOWARD") | vendor_name == "HCPPS" ~ "HOWARD",
+        str_detect(vendor_name,"KENT") ~ "KENT",
+        str_detect(vendor_name,"MONTGOMERY") ~ "MONTGOMERY",
+        str_detect(vendor_name,"PRINCE GEORGE") | str_detect(vendor_name,"PG C") ~ "PRINCE GEORGES",
+        str_detect(vendor_name,"MARY") ~ "ST MARYS",
+        str_detect(vendor_name,"SOMERSET") ~ "SOMERSET",
+        str_detect(vendor_name,"TALBOT") ~ "TALBOT",
+        str_detect(vendor_name,"WASHINGTON") ~ "WASHINGTON",
+        str_detect(vendor_name,"WICOMICO") ~ "WICOMICO",
+        str_detect(vendor_name, "WORCESTER") ~ "WORCESTER",
+        str_detect(vendor_name, "QUEEN ANNE") ~ "QUEEN ANNES",
+        str_detect(vendor_name, "GARRETT") ~ "GARRETT",
+        TRUE ~ NA
+      )
+  ) |>
+  drop_na(vendor_name) |> 
+  group_by(vendor_name, fiscal_year) |>   
+  summarise(
+    amount_received = sum(amount)
+  ) |> 
+  arrange(desc(amount_received)) |> 
+  rename(county = vendor_name)
+
+#Year with most funding for each county
+school_system_payments |> 
+  slice_max(amount_received)
+
+#highest paid school system each year
+school_system_payments |> 
+  group_by(fiscal_year) |> 
+  slice_max(amount_received)
 ```
 
 # Question 4: Which agency had the largest increase in spending between 2019 and 2025?
@@ -142,9 +192,9 @@ agency_county <- state_payments |>
   summarise(
     top_zip = vendor_zip,
     amount = total_payments
-  )
+  ) |> arrange(desc(amount))
+```
 
 #Memo Link
 https://docs.google.com/document/d/1p8ndP91tI8xR4dsyEjwPeHVeuYGVDtpoiK_XfnI02DY/edit?usp=sharing
 
-```

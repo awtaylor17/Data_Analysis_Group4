@@ -143,4 +143,8 @@ agency_county <- state_payments |>
     top_zip = vendor_zip,
     amount = total_payments
   )
+
+#Memo Link
+https://docs.google.com/document/d/1p8ndP91tI8xR4dsyEjwPeHVeuYGVDtpoiK_XfnI02DY/edit?usp=sharing
+
 ```
